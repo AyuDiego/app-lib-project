@@ -1,0 +1,14 @@
+<div class="container mt-4">
+    <div class="character-card p-3 bg-light rounded">
+      <img [src]="character.image" class="img-fluid" />
+      <h2>{{ character.name }}</h2>
+      <p>Status: {{ character.status }}</p>
+      <p>Species: {{ character.species }}</p>
+      <p>Gender: {{ character.gender }}</p>
+      <p>Origin: {{ character.origin.name }}</p>
+      <p>Location: {{ character.location.name }}</p>
+    </div>
+  
+    <button class="btn btn-secondary mt-3" (click)="goBack()">Volver</button>
+  </div>
+  

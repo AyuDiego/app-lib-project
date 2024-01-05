@@ -2,7 +2,7 @@
   <h1>Showcase Ui - Software Development Kit</h1>
 
   <h2 class="text-center my-4">Card</h2>
-  <div class="row">
+  <div class="bg-primary row">
       <div class="col-md-4">
           <lib-card [isStarSelected]="true"
               pathImage="https://rickandmortyapi.com/api/character/avatar/2.jpeg"></lib-card>
@@ -15,3 +15,23 @@
       </div>
   </div>
 </div>
+
+<div class="container bg-gradient py-3">
+   
+
+    <div class="row">
+      <div *ngFor="let character of characters" class="col-md-4 mb-4">
+        
+                <lib-card [isStarSelected]="true" 
+                [alive]="character.status === 'Alive'"
+                pathImage="{{character.image}}"
+                name="{{character.name}}"
+                lastLocation="{{character.location.name}}"
+                firstSeen="{{character.origin.name}}"
+                    ></lib-card>
+      
+          <a [routerLink]="['/details', character.id]" class="btn btn-primary">Detalles</a>
+         
+      </div>
+    </div>
+  </div> 
