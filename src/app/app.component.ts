@@ -11,6 +11,7 @@ import { Character } from './models/Character';
 
 import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuItem } from 'primeng/api';
+import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 
 const PRIME_NG_PROVIDERS = [ConfirmationService, MessageService];
 const PRIME_NG_IMPORTS = [ToastModule, ConfirmDialogModule, TabMenuModule];
@@ -24,6 +25,7 @@ const LIB_COMPONENTS = [UiSdkComponent, CardComponent, CardDetailsComponent];
     HttpClientModule,
     RouterOutlet,
     RouterLink,
+    ReactiveFormsModule,
     LIB_COMPONENTS,
     PRIME_NG_IMPORTS,
   ],
@@ -32,34 +34,54 @@ const LIB_COMPONENTS = [UiSdkComponent, CardComponent, CardDetailsComponent];
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
+
   items!: MenuItem[];
   characters: Character[] = [];
+  filteredCharacters: Character[] = [];
   characterSelected: any = {};
   getDataEpisode: any = {};
-
+  
   activeItem!: MenuItem;
   episodesSelectedById: any = [{}];
-
+  
   isStarModalSelected = false;
-
+  
+  public readonly filterForm = new FormGroup({
+    name: new FormControl(null),
+  });
+  private readonly filterFunctions = {
+    nameFilter: (filter: Partial<Character>, value: Character) =>
+      value.name.toLowerCase().includes(filter.name?.toLowerCase() || ''),
+ 
+  };
+  private readonly activeFilters = [
+    this.filterFunctions.nameFilter,
+  ]; 
   get boolModalStarSelected() {
     return this.isStarModalSelected;
   }
 
   get dataEpisodes() {
-    return  [ { id: 1, name: 'Pilot', air_date: 'December 2, 2013', episode: 'S01E01' },
-    { id: 2, name: 'Lawnmower Dog', air_date: 'December 9, 2013', episode: 'S01E02' },
-    { id: 3, name: 'Anatomy Park', air_date: 'December 16, 2013', episode: 'S01E03' }
-  ];
+    return this.episodesSelectedById
+   
   }
 
   constructor(
     private apiService: ApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService
-  ) {
-    this.characters = [];
+  ) { 
+    this.filterForm.valueChanges.subscribe((value) => {
+      const filterValue = {
+        name: value.name || ''  
+      };
+      this.filteredCharacters = this.characters.filter((character) =>
+        this.activeFilters.every((filter) => filter(filterValue, character))
+      );
+    });
+   
   }
+  
   title = 'app-lib-project';
 
   ngOnInit(): void {
@@ -97,9 +119,9 @@ export class AppComponent implements OnInit {
     this.confirmationService.confirm({
       accept: () => {
         this.messageService.add({
-          severity: '',
+          severity: 'success',
           summary: 'Shared',
-          detail: 'You have Shared',
+          detail: 'Your content has been shared',
           life: 3000,
         });
       },
@@ -117,6 +139,7 @@ export class AppComponent implements OnInit {
   getData() {
     this.apiService.getCharacters().subscribe((data: any) => {
       this.characters = data.results;
+      this.filteredCharacters = this.characters;
       console.log(this.characters);
     });
   }

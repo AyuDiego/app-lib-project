@@ -1,7 +1,21 @@
 <div class="jumbotron jumbotron-header bg-cover text-white ">
-    <div class="container py-5 text-center">
-        <p class="display-4 header-logo"></p>
-        <p class="font-italic mb-0">FIltro</p>
+    <div class="container d-flex align-items-center flex-column  py-5 text-center">
+        <p class="display-4 header-logo mb-4"></p>
+        <div class="form-group  mb-4">
+            <form [formGroup]="filterForm" class="filter">
+              
+                  <input
+                  class="form-control "
+                    formControlName="name"
+                    type="text"
+                    name="name"
+                    placeholder="Search by name…"
+                  />
+                
+                </form>
+                
+
+          </div>
 
     </div>
 </div>
@@ -13,7 +27,7 @@
 
 <div class="container bg-gradient py-3">
     <div class="row">
-        @for (character of characters; track character.id) {
+        @for (character of filteredCharacters; track character.id) {
         <div class="col-md-4 mb-4">
             <lib-card [isStarSelected]="true" (click)="onDetail(character.id)" [alive]="character.status === 'Alive'"
                 pathImage="{{character.image}}" name="{{character.name}}" lastLocation="{{character.location.name}}"
@@ -30,6 +44,7 @@
         [dataEpisodeSelected]="dataEpisodes"
         [pathImgRecommended]="'https://rickandmortyapi.com/api/character/avatar/2.jpeg'">
     </lib-card-details>
+   
 </div>
 
 
