@@ -1,0 +1,332 @@
+/* You can add global styles to this file, and also import other style files */
+
+
+// modal css
+.container {
+    &-modal {
+        user-select: none;
+        background: #231e39;
+        color: #b3b8cd;
+        border-radius: 5px;
+        width: 740px;
+        text-align: center;
+        box-shadow: 0 10px 20px -10px rgba(0, 0, 0, .75);
+        display: flex;
+        flex-direction: column;
+
+    }
+
+    &-profile {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        position: relative;
+        margin-bottom: -60px;
+    }
+
+    &-info {
+        padding: 0px 0 20px 0;
+    }
+
+    &-profile-img {
+        position: relative;
+        z-index: 1;
+        top: -80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    &-episodes {}
+}
+
+.pi {
+    &.pi-times-circle {
+        background-color: white;
+        color: transparent;
+        border: 5px solid black;
+        mix-blend-mode: lighten;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        width: 30px;
+        height: 30px;
+        margin: 10px 13px 40px 0;
+
+        &::before {
+            border: 5px solid black;
+            border-radius: 50%;
+            background-color: white;
+            width: 30px;
+            height: 30px;
+            font-size: 30px;
+            color: transparent;
+            -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2"><circle cx="12" cy="12" r="10" fill="none"/><line x1="15" y1="9" x2="9" y2="15" stroke="black" stroke-width="2"/><line x1="15" y1="15" x2="9" y2="9" stroke="black" stroke-width="2"/></svg>') no-repeat center;
+            mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2"><circle cx="12" cy="12" r="10" fill="none"/><line x1="15" y1="9" x2="9" y2="15" stroke="black" stroke-width="2"/><line x1="15" y1="15" x2="9" y2="9" stroke="black" stroke-width="2"/></svg>') no-repeat center;
+            mask-size: contain;
+            -webkit-mask-size: contain;
+            mix-blend-mode: difference;
+        }
+    }
+}
+
+.avatar-img {
+    width: 155px;
+    height: 155px;
+    display: flex;
+    align-self: flex-start;
+    flex-grow: 0;
+    border-radius: 50px;
+    border: solid 2px #FFFBFB;
+    background: url("https://rickandmortyapi.com/api/character/avatar/1.jpeg") center center no-repeat;
+}
+
+
+.cover-photo {
+    --opacity-negro: 0.4;
+    background-image: linear-gradient(rgba(0, 0, 0, var(--opacity-negro)), rgba(0, 0, 0, var(--opacity-negro))),
+        url("../assets/images/bg-rick.png");
+    width: 100%;
+    height: 220px;
+    border-radius: 5px 5px 0 0;
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+
+}
+
+
+.bg-cover-down {
+    height: 180px;
+    background-color: #F2F2F2;
+    overflow: hidden;
+    position: absolute;
+    top: 220px;
+    width: 100%;
+
+}
+
+.profile {
+    height: 155px;
+    width: 155px;
+    border-radius: 50%;
+    border: 1px solid #FFFBFB;
+    padding: 4px;
+    background: #FFFBFB;
+}
+
+.profile {
+    &-text {
+        z-index: 1;
+        font-family: 'Montserrat';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 15px;
+        color: #4F4F4F;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    &-status {
+        font-size: 12px;
+        color: #4F4F4F;
+        padding-top: 17px;
+
+    }
+
+    &-name {
+        font-family: 'Montserrat';
+        font-style: normal;
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 24px;
+        color: #081F32;
+
+    }
+
+    &-race {
+        font-family: 'Montserrat';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 15px;
+        color: #4F4F4F;
+    }
+}
+
+
+.ellipse-modal {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    top: 56%;
+    border-radius: 50%;
+    border: 4px solid #FFFBFB;
+    background: #F2F2F2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.container-modal--info {
+
+    .info {
+        font-family: 'Montserrat';
+        font-style: normal;
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 24px;
+        text-align: start;
+        color: #4F4F4F;
+    }
+
+    .row {
+        .col-md-4 {
+            padding: 0;
+        }
+    }
+}
+
+
+
+.mini-card-info {
+    width: 163px;
+    display: flex;
+    flex-direction: column;
+    padding: 12px 0 12px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--Gray-4, #BDBDBD);
+    gap: 2px;
+    justify-content: flex-start;
+
+
+    &-title {
+        font-family: 'Montserrat';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 11px;
+        line-height: 13px;
+        letter-spacing: 0.07px;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        color: #828282;
+
+        >.pi-info-circle {
+            font-size: 12px;
+            width: 12px;
+            height: 12px;
+
+        }
+
+    }
+
+    &-text {
+        font-family: 'Montserrat';
+        font-style: normal;
+        font-weight: 600;
+        font-size: 17px;
+        line-height: 22px;
+        color: #081F32;
+        text-align: start;
+    }
+}
+
+.mini-card-episodes {
+    width: 163px;
+    display: flex;
+    flex-direction: column;
+    padding: 12px 0 12px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--Gray-4, #BDBDBD); 
+    justify-content: flex-start;
+    text-align: start;
+
+    &-title {
+        color: #828282;
+        font-family: 'Montserrat';
+        font-size: 11px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 13px;
+    }
+    &-code{ 
+
+        font-family: 'Montserrat';
+        font-style: normal;
+        font-weight: 600;
+        font-size: 17px;
+        line-height: 22px; 
+        letter-spacing: -0.41px;
+        
+        color: #081F32; 
+
+    }
+    &-date{
+        color: #828282;
+    font-family: 'Montserrat';
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 13px; 
+    letter-spacing: 0.07px;
+    }
+}
+
+.separator {
+    background-color: #E0E0E0;
+    padding: 1px;
+}
+
+.container-buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+
+    .btn.btn-share-pj {
+        border-radius: 60px;
+        background: #11555F;
+        display: inline-flex;
+        padding: 11px 20px;
+        align-items: center;
+        gap: 10px;
+        color: white;
+    }
+}
+
+.jumbotron-header{
+    height: 455px;
+    background: url(./../assets/images/bg-header.png)top center no-repeat;
+    width: 100%;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    align-items: center; 
+}
+.header-logo{
+    background: url(./../assets/images/rick\ and\ morty.svg)center center no-repeat;
+    width: 100%; 
+height: 122px;
+
+}
+
+ 
+.no-underline {
+    text-decoration: none !important
+  }
+ 
+ .bg-navbar{
+    background-color: #F2F2F2;
+ }
