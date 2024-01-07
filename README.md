@@ -6,21 +6,26 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Para instalar las dependencias del proyecto se debe ejecutar el comando `npm install` en la carpeta raiz del proyecto. He utilizado Node v18.16.0 y angular 17.0.9.
 
+## Instalación de Libreria subida a npm
+
+Para instalar la libreria subida a npm se debe ejecutar el comando `npm i @ayudiego/ui-sdk` en la carpeta raiz del proyecto.  
+Link de npm: https://www.npmjs.com/package/@ayudiego/ui-sdk
+
 ## Development server
 
 Para arrancer el proyecto utilice npm install para instalar las dependencias y luego npm start para arrancar el servidor de desarrollo. Navegue a `http://localhost:4200/`. La aplicación se recargará automáticamente si cambia alguno de los archivos de origen.
 
 ## Build
 
-Para construir el proyecto utilice npm run build. Los artefactos de construcción se almacenarán en el directorio `dist/`. Use el indicador `--prod` para una compilación de producción.
+Para construir el proyecto utilice `npm run build`. Los artefactos de construcción se almacenarán en el directorio `dist/`. Use el indicador `--prod` para una compilación de producción.
 
 ## Running unit tests
 
-Para ejecutar las pruebas unitarias utilice npm run test.  
+Para ejecutar las pruebas unitarias utilice `npm run test`.  
 
 ## Running unit tests whit coverage
 
-Para ejecutar las pruebas unitarias con covertura utilice ng test --no-watch --code-coverage.  
+Para ejecutar las pruebas unitarias con covertura utilice `ng test --no-watch --code-coverage`.  
 
 Esta es una preview de la pagina arrancada  en el navegador.
 
