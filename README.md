@@ -24,4 +24,4 @@ Para ejecutar las pruebas unitarias con covertura utilice ng test --no-watch --c
 
 Esta es una preview de la pagina arrancada  en el navegador.
 
-![Alt text](src/assets/images/image.png)
+![Alt text](./src/assets/images/image.png)
