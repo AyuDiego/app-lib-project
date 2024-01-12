@@ -16,14 +16,6 @@ export interface Character {
     url: string,
     created: string,
 };
-  
-  export interface CharacterData {
-    id: number;
-    episodes: Episode[];
-  };
 
-  export interface  MyJsonData {
-    character: CharacterData;
-    characters: Character[];
-  };
-  
+
+ 
