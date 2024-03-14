@@ -1,19 +1,29 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { ActivatedRoute } from '@angular/router';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ApiService } from './service/api.service';
 import { of } from 'rxjs';
 import { Character } from './models/Character';
+import { LocationCharacter } from './models/LocationCharacter';
+import { CHARACTER_MOCK_TEST } from './utils/mock-tests';
 
 describe('AppComponent', () => {
+  let component: AppComponent;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent,RouterTestingModule, HttpClientTestingModule],
-      providers: [ConfirmationService, MessageService, ApiService], 
+      imports: [AppComponent, RouterTestingModule, HttpClientTestingModule],
+      providers: [ConfirmationService, MessageService, ApiService],
     }).compileComponents();
+    component = new AppComponent(
+      {} as ApiService,
+      {} as ConfirmationService,
+      {} as MessageService
+    );
+    component.characters = CHARACTER_MOCK_TEST;
   });
 
   it('should create the app', () => {
@@ -25,20 +35,9 @@ describe('AppComponent', () => {
   it('should initialize items with correct labels', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    app.items = [
-      { label: 'All' },
-      { label: 'Unknown' },
-      { label: 'Female' },
-      { label: 'Male' },
-      { label: 'Genderless' },
-    ];
-    expect(app.items).toEqual([
-      { label: 'All' },
-      { label: 'Unknown' },
-      { label: 'Female' },
-      { label: 'Male' },
-      { label: 'Genderless' },
-    ]);
+    const items = [ { label: 'All' },{ label: 'Unknown' },{ label: 'Female' },{ label: 'Male' },{ label: 'Genderless' }];
+    app.items = items;
+    expect(app.items).toEqual(items);
   });
 
   it('should initialize activeItem with the first item from items', () => {
@@ -51,36 +50,36 @@ describe('AppComponent', () => {
   it('should call getData method on ngOnInit', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    spyOn(app, 'getData');
+    spyOn(app, 'getData' as any);
     app.ngOnInit();
-    expect(app.getData).toHaveBeenCalled();
+    expect((app as any).getData).toHaveBeenCalled();
   });
 
   it('should call getCharacterById method when onDetail is called with id', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    spyOn(app, 'getCharacterById');
+    spyOn(app, 'getCharacterById' as any);
     app.onDetail(1);
-    expect(app.getCharacterById).toHaveBeenCalledWith(1);
+    expect((app as any).getCharacterById).toHaveBeenCalledWith(1);
   });
 
   it('should call getCharacterById method when onDetail is called with id and episodesSelectedById is empty', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    spyOn(app, 'getCharacterById');
+    spyOn(app, 'getCharacterById' as any);
     app.episodesSelectedById = [];
     app.onDetail(1);
-    expect(app.getCharacterById).toHaveBeenCalledWith(1);
+    expect((app as any).getCharacterById).toHaveBeenCalledWith(1);
   });
 
   it('should reset episodesSelectedById and call getCharacterById method when onDetail is called with id and episodesSelectedById is not empty', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    spyOn(app, 'getCharacterById');
+    spyOn(app, 'getCharacterById' as any);
     app.episodesSelectedById = [{ id: 1 }];
     app.onDetail(1);
     expect(app.episodesSelectedById).toEqual([]);
-    expect(app.getCharacterById).toHaveBeenCalledWith(1);
+    expect((app as any).getCharacterById).toHaveBeenCalledWith(1);
   });
 
   it('should call confirmationService.confirm method with correct parameters when onDetail is called', () => {
@@ -134,9 +133,9 @@ describe('AppComponent', () => {
 
     expect(messageServiceSpy).toHaveBeenCalledWith({
       severity: 'info',
-    summary: 'Closed Details',
-    detail: 'Details Closed',
-    life: 3000,
+      summary: 'Closed Details',
+      detail: 'Details Closed',
+      life: 3000,
     });
   });
 
@@ -145,13 +144,100 @@ describe('AppComponent', () => {
     const app = fixture.componentInstance;
     const apiService = fixture.debugElement.injector.get(ApiService);
     const characters = [{ name: 'Character 1' }, { name: 'Character 2' }];
-    spyOn(apiService, 'getCharacters').and.returnValue(of<any[]>({ results: characters }));
-  
-    app.getData();
-  
+    spyOn(apiService, 'getCharacters').and.returnValue(
+      of<any[]>({ results: characters })
+    );
+
+    app['getData']();
+
     expect(apiService.getCharacters).toHaveBeenCalled();
     expect(app.characters).toEqual(characters as Character[]);
     expect(app.filteredCharacters).toEqual(characters as Character[]);
+  });
+
+  it('should fetch character by id and populate episodesSelectedById', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    const apiService = fixture.debugElement.injector.get(ApiService);
+    const characterId = 1;
+    const character: unknown = {
+      episode: [
+        'https://rickandmortyapi.com/api/episode/1',
+        'https://rickandmortyapi.com/api/episode/2',
+      ],
+    };
+    const episodes = [
+      { id: 1, name: 'Episode 1' },
+      { id: 2, name: 'Episode 2' },
+    ];
+    spyOn(apiService, 'getCharacterById').and.returnValue(of(character));
+    spyOn(apiService, 'getEpisodesById').and.returnValues(
+      of(episodes[0]),
+      of(episodes[1])
+    );
+    app['getCharacterById'](characterId);
+    expect(apiService.getCharacterById).toHaveBeenCalledWith(characterId);
+    expect(apiService.getEpisodesById).toHaveBeenCalledTimes(2);
+    expect(app.episodesSelectedById.length).toEqual(2);
+  });
+
+  it('should update filteredCharacters when filterForm value changes', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    const filterForm = app.filterForm;
+    const apiService = fixture.debugElement.injector.get(ApiService);
+    const characters = [{ name: 'Character 1' }, { name: '' }];
+    spyOn(apiService, 'getCharacters').and.returnValue(
+      of<any[]>({ results: characters })
+    );
+    app['getData']();
+    const filterValue: any = { name: 'Character 1' };
+    const filterValue2: any = { name: '' };
+    filterForm?.setValue(filterValue);
+    expect(app.filteredCharacters).toEqual([
+      { name: filterForm?.value?.name } as any,
+    ]);
+    filterForm?.setValue(filterValue2);
+    expect(app.filteredCharacters).toEqual([filterValue, filterValue2 as any]);
+  });
+
+  it('should get boolModalStarSelected', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    app.isStarModalSelected = true;
+    expect(app.boolModalStarSelected).toBe(true);
+  });
+
+  it('should get dataEpisodes()', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    app.episodesSelectedById = [{ id: 1 }];
+    expect(app.dataEpisodes).toEqual([{ id: 1 }]);
+  });
+  it('should onDetail if id is truthy call getCharacterById and if have character call getCharacterById', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    const apiService = fixture.debugElement.injector.get(ApiService);
+    const characterId = 1;
+    const character: unknown = {
+      episode: [
+        'https://rickandmortyapi.com/api/episode/1',
+        'https://rickandmortyapi.com/api/episode/2',
+      ],
+    };
+    const episodes = [
+      { id: 1, name: 'Episode 1' },
+      { id: 2, name: 'Episode 2' },
+    ];
+    spyOn(apiService, 'getCharacterById').and.returnValue(of(character));
+    spyOn(apiService, 'getEpisodesById').and.returnValues(
+      of(episodes[0]),
+      of(episodes[1])
+    );
+    app.onDetail(characterId);
+    expect(apiService.getCharacterById).toHaveBeenCalledWith(characterId);
+    expect(apiService.getEpisodesById).toHaveBeenCalledTimes(2);
+    expect(app.episodesSelectedById.length).toEqual(2);
   });
 
   it('should toggle isStarModalSelected when onToggleStar is called', () => {
@@ -164,65 +250,20 @@ describe('AppComponent', () => {
     expect(app.isStarModalSelected).toBe(false);
   });
 
-  it('should fetch character by id and populate episodesSelectedById', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    const apiService = fixture.debugElement.injector.get(ApiService);
-    const characterId = 1;
-    const character: unknown = { episode: ['https://rickandmortyapi.com/api/episode/1', 'https://rickandmortyapi.com/api/episode/2'] };
-    const episodes = [{ id: 1, name: 'Episode 1' }, { id: 2, name: 'Episode 2' }]; 
-    spyOn(apiService, 'getCharacterById').and.returnValue(of(character));
-    spyOn(apiService, 'getEpisodesById').and.returnValues(of(episodes[0]), of(episodes[1]));
-    app.getCharacterById(characterId);
-    expect(apiService.getCharacterById).toHaveBeenCalledWith(characterId);
-    expect(apiService.getEpisodesById).toHaveBeenCalledTimes(2);
-    expect(app.episodesSelectedById.length).toEqual(3); 
+  it('should filter characters by gender', () => {
+    const menuItem: MenuItem = { label: 'Male' };
+    component.filterByGender(menuItem);
+    expect(component.filteredCharacters.length).toBe(2);
+    expect(
+      component.filteredCharacters.every(
+        (character) => character.gender === menuItem.label
+      )
+    ).toBeTrue();
   });
 
-    it('should update filteredCharacters when filterForm value changes', () => {
-      const fixture = TestBed.createComponent(AppComponent);
-      const app = fixture.componentInstance;
-      const filterForm = app.filterForm; 
-      // Set initial characters and activeFilters
-      const apiService = fixture.debugElement.injector.get(ApiService);
-      const characters = [{ name: 'Character 1' }, { name: '' }];
-      spyOn(apiService, 'getCharacters').and.returnValue(of<any[]>({ results: characters }));
-      app.getData();
-      const filterValue: any = { name: 'Character 1' };
-      const filterValue2: any = { name: '' };
-      filterForm?.setValue(filterValue);
-      expect(app.filteredCharacters).toEqual([{ name: filterForm?.value?.name } as any]);
-      filterForm?.setValue(filterValue2); 
-      expect(app.filteredCharacters).toEqual([filterValue, filterValue2 as any]);
-    });
-
-    it('should get boolModalStarSelected', () => {
-      const fixture = TestBed.createComponent(AppComponent);
-      const app = fixture.componentInstance;
-      app.isStarModalSelected = true;
-      expect(app.boolModalStarSelected).toBe(true);
-    });
-
-    it('should get dataEpisodes()', () => {
-      const fixture = TestBed.createComponent(AppComponent);
-      const app = fixture.componentInstance;
-      app.episodesSelectedById = [{ id: 1 }];
-      expect(app.dataEpisodes).toEqual([{ id: 1 }]);
-    });
-it('should onDetail if id is truthy call getCharacterById and if have character call getCharacterById', () => {
-  const fixture = TestBed.createComponent(AppComponent);
-  const app = fixture.componentInstance;
-  const apiService = fixture.debugElement.injector.get(ApiService);
-  const characterId = 1;
-  const character: unknown = { episode: ['https://rickandmortyapi.com/api/episode/1', 'https://rickandmortyapi.com/api/episode/2'] };
-  const episodes = [{ id: 1, name: 'Episode 1' }, { id: 2, name: 'Episode 2' }];
-  spyOn(apiService, 'getCharacterById').and.returnValue(of(character));
-  spyOn(apiService, 'getEpisodesById').and.returnValues(of(episodes[0]), of(episodes[1]));
-  app.onDetail(characterId);
-  expect(apiService.getCharacterById).toHaveBeenCalledWith(characterId);
-  expect(apiService.getEpisodesById).toHaveBeenCalledTimes(2);
-  expect(app.episodesSelectedById.length).toEqual(2);
-} );
-
-
+  it('should not filter characters if gender is All', () => {
+    const menuItem: MenuItem = { label: 'All' };
+    component.filterByGender(menuItem);
+    expect(component.filteredCharacters.length).toBe(4);
   });
+});

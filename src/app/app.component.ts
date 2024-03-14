@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import {
@@ -38,16 +38,16 @@ const LIB_COMPONENTS = [UiSdkComponent, CardComponent, CardDetailsComponent];
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'app-lib-project';
   items!: MenuItem[];
   characters: Character[] = [];
   filteredCharacters: Character[] = [];
-  characterSelected: any = {};
-  getDataEpisode: any = {};
+  characterSelected: Character | null = null;
+  getDataEpisode: Record<string, unknown> = {};
 
   activeItem!: MenuItem;
-  episodesSelectedById: any = [{}];
+  episodesSelectedById: Array<Record<string, unknown>> = [];
 
   isStarModalSelected = false;
 
@@ -66,7 +66,7 @@ export class AppComponent implements OnInit {
   }
 
   get dataEpisodes() {
-    return this.episodesSelectedById
+    return this.episodesSelectedById;
   }
 
   constructor(
@@ -74,18 +74,16 @@ export class AppComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private messageService: MessageService
   ) {
-    this.filterForm.get('name')?.valueChanges
-    .pipe(takeUntil(this.destroy$))
+    this.filterForm
+      .get('name')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe((name: string | null) => {
         this.filteredCharacters = this.characters.filter((character) =>
-          this.activeFilters.every((filter) => filter({ name: name || undefined }, character))
+          this.activeFilters.every((filter) =>
+            filter({ name: name || undefined }, character)
+          )
         );
       });
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   ngOnInit(): void {
@@ -103,11 +101,14 @@ export class AppComponent implements OnInit {
 
   onDetail(id: number) {
     if (id) {
-      this.apiService.getCharacterById(id).subscribe((character) => {
-        if (character) {
-          this.characterSelected = character;
-        }
-      }).unsubscribe;
+      this.apiService
+        .getCharacterById(id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((character) => {
+          if (character) {
+            this.characterSelected = character;
+          }
+        });
     }
 
     if (
@@ -140,26 +141,52 @@ export class AppComponent implements OnInit {
     });
   }
 
-  getData() {
-    this.apiService.getCharacters().subscribe((data: any) => {
-      this.characters = data.results;
+  filterByGender(gender: MenuItem) {
+    const selectedGender = gender.label
+    if (selectedGender === 'All') {
       this.filteredCharacters = this.characters;
-    }).unsubscribe;
-  }
-
-  getCharacterById(id: number) {
-    this.apiService.getCharacterById(id).subscribe((character) => {
-      const episodeUrls = character.episode;
-      episodeUrls.forEach((url: string) => {
-        const episodeId = Number(url.split('/').pop());
-        this.apiService.getEpisodesById(episodeId).subscribe((episode) => {
-          this.episodesSelectedById.push(episode);
-        });
-      });
-    }).unsubscribe;
+    } else {
+      this.filteredCharacters = this.characters.filter(
+        (character) => character.gender === gender.label
+      );
+    }
+   
   }
 
   onToggleStar() {
     this.isStarModalSelected = !this.isStarModalSelected;
+  }
+
+  private getData() {
+    this.apiService
+      .getCharacters()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data: any) => {
+        this.characters = data.results;
+        this.filteredCharacters = this.characters;
+      });
+  }
+
+  private getCharacterById(id: number) {
+    this.apiService
+      .getCharacterById(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((character) => {
+        const episodeUrls = character.episode;
+        episodeUrls.forEach((url: string) => {
+          const episodeId = Number(url.split('/').pop());
+          this.apiService
+            .getEpisodesById(episodeId)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((episode) => {
+              this.episodesSelectedById.push(episode);
+            });
+        });
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
