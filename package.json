@@ -27,7 +27,8 @@
     "primeng": "^17.3.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.14.2"
+    "zone.js": "~0.14.2",
+    "webpack-dev-middleware": ">=6.1.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^17.3.1",
@@ -41,6 +42,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.2.2"
+    "typescript": "~5.2.2",
+    "webpack-dev-middleware": ">=6.1.2"
   }
 }
